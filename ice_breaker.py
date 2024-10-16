@@ -13,19 +13,29 @@ def ice_break_with(name: str) -> Tuple[Summary, str]:
     linkedin_username = linkedin_lookup_agent(name=name)
     linkedin_data = scrape_linkedin_profile(linkedin_username, mock=True)
 
-    summary_template = """""
-        given the LinkedIn information {information} about a person, I want you to create:
-        1. A brief critique of the the way the profile is written
-        2. 3 crucial actionable feedback to improve the the person's profile. Specify which part of the profile you are referring to.
-        
+    summary_template = """ 
+        You are an expert LinkedIn profile consultant. Given the LinkedIn information below about a person, please provide the following:
+
+        1. **Profile Critique:**
+            - A brief analysis (2-3 sentences) highlighting the strengths and weaknesses of the profile's overall presentation.
+
+        2. **Actionable Feedback:**
+            - **Three** specific and actionable suggestions to improve the person's profile.
+            - For each suggestion, clearly specify which part of the profile it pertains to (e.g., Headline, Summary, Experience).
+
         Your answer should be in the following format:
         \n{format_instructions}
-        """
+
+        Below is the LinkedIn information to analyze:
+        {information}
+
+        Your answer should follow the example format above.
+    """
 
     summary_prompt_template = PromptTemplate(
         input_variables=["information"],
         template=summary_template,
-        partial_variables = {"format_instructions": summary_parser.get_format_instructions()}
+        partial_variables={"format_instructions": summary_parser.get_format_instructions()}
     )
 
     model = "gemini-1.5-flash"
